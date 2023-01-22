@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'golfer',
     'round',
-    'course'
+    'course',
+    'holeinfo',
+    'tee'
 ]
 
 AUTH_USER_MODEL = 'golfer.Golfer'
