@@ -1,7 +1,7 @@
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
-from golf.base import views
+from base import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
