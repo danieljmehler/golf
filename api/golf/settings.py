@@ -37,8 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'golfer'
 ]
+
+AUTH_USER_MODEL = 'golfer.Golfer'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

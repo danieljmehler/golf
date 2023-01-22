@@ -1,11 +1,12 @@
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
-from base import views
+from base import views as base_views
+from golfer import views as golfer_views
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+router.register(r'golfers', golfer_views.GolferViewSet)
+router.register(r'groups', base_views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
