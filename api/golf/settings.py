@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'golfer',
-    'round'
+    'round',
+    'course'
 ]
 
 AUTH_USER_MODEL = 'golfer.Golfer'
