@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 class GolferSerializer(serializers.HyperlinkedModelSerializer):
 
-    rounds = RoundSerializer(many=True, required=False, read_only=True)
+    rounds = RoundSerializer(many=True, required=True)
 
     class Meta:
         model = Golfer
