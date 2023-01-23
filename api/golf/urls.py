@@ -7,13 +7,15 @@ from round import views as round_views
 from course import views as course_views
 from tee import views as tee_views
 from holeinfo import views as holeinfo_views
+from holescore import views as holescore_views
 
 router = routers.DefaultRouter()
 router.register(r'golfers', golfer_views.GolferViewSet)
 router.register(r'rounds', round_views.RoundViewSet)
-router.register(r'course', course_views.CourseViewSet)
-router.register(r'tee', tee_views.TeeViewSet)
+router.register(r'courses', course_views.CourseViewSet)
+router.register(r'tees', tee_views.TeeViewSet)
 router.register(r'hole_info', holeinfo_views.HoleInfoViewSet)
+router.register(r'hole_scores', holescore_views.HoleScoreViewSet)
 router.register(r'groups', base_views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.

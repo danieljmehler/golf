@@ -9,16 +9,18 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('course', '0001_initial'),
+        ('holeinfo', '0001_initial'),
+        ('round', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tee',
+            name='HoleScore',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tees', to='course.course')),
+                ('score', models.PositiveSmallIntegerField()),
+                ('hole', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scores', to='holeinfo.holeinfo')),
+                ('round', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='holes', to='round.round')),
             ],
         ),
     ]
