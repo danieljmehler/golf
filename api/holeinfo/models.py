@@ -14,6 +14,7 @@ class HoleInfo(models.Model):
     yards = models.PositiveSmallIntegerField()
 
     class Meta:
+        ordering = ['tee', 'number']
         constraints = [
             models.CheckConstraint(
                 name="Hole Number",
@@ -32,3 +33,6 @@ class HoleInfo(models.Model):
                 check=models.Q(yards__range=(1, 700))
             )
         ]
+    
+    def __str__(self):
+        return "{} | Hole {} | Par {} | {} Yards".format(self.tee, self.number, self.par, self.yards)
