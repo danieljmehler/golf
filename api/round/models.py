@@ -23,3 +23,9 @@ class Round(models.Model):
     )
 
     date = models.DateTimeField('date')
+
+    class Meta:
+        ordering = ['golfer', 'course', 'tee', 'date']
+
+    def __str__(self):
+        return "{} | {} | {}".format(self.golfer, self.tee, self.date)

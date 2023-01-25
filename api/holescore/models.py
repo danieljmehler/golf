@@ -15,3 +15,9 @@ class HoleScore(models.Model):
         related_name='holes'
     )
     score = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ['round', 'hole']
+
+    def __str__(self):
+        return "{} | Hole {} | Par {} | {}".format(self.round, self.hole.number, self.hole.par, self.score)
