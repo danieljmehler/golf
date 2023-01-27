@@ -5,6 +5,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import AddCourseModal from "./Courses/AddCourseModal"
 
 class Courses extends Component {
@@ -39,7 +42,12 @@ class Courses extends Component {
         this.toggle();
         if (item.id) {
             axios
-                .put(`http://localhost:8000/courses/${item.id}/`, item)
+                .put(`http://localhost:8000/courses/${item.id}/`, item, {
+                    auth: {
+                        username: "admin",
+                        password: "admin"
+                    }
+                })
                 .then(res => this.refreshList())
                 .catch(err => console.log(err));
         } else {
@@ -62,12 +70,20 @@ class Courses extends Component {
 
     renderCourseListItem = () => {
         return this.state.courses.map((course) => (
-            <ListGroup.Item key={course.id}>
-                <div>
+            <ListGroup.Item
+                key={course.id}
+                as="li"
+                className="d-flex justify-content-between align-items-start"
+            >
+                <div className="ms-2 me-auto">
                     <div className="fw-bold">{course.name}</div>
-                    <div className="text-muted"># Hole | Par # | # yards</div>
+                    # Holes | Par # | # Yards
                 </div>
-            </ListGroup.Item>
+                <DropdownButton as={ButtonGroup} title="Edit" id="bg-nested-dropdown">
+                    <Dropdown.Item eventKey="1" onClick={() => this.setState({ activeItem: course, modal: !this.state.modal })}>Edit Course</Dropdown.Item>
+                    <Dropdown.Item eventKey="2">Edit Course Tees</Dropdown.Item>
+                </DropdownButton>
+            </ListGroup.Item >
         ));
     };
 
@@ -93,12 +109,14 @@ class Courses extends Component {
                     </Col>
                     <Col md="3"></Col>
                 </Row>
-                <AddCourseModal
-                    activeItem={this.state.activeItem}
-                    toggle={this.toggle}
-                    onSave={this.handleSubmit}
-                    show={this.state.modal}
-                />
+                {this.state.modal ? (
+                    <AddCourseModal
+                        activeItem={this.state.activeItem}
+                        toggle={this.toggle}
+                        onSave={this.handleSubmit}
+                        show={this.state.modal}
+                    />
+                ) : null}
             </Container>
         );
     }
