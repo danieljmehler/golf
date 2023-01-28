@@ -35,16 +35,16 @@ class Courses extends Component {
             .catch(err => console.log(err));
     };
 
-    toggle = () => {
-        this.setState({ modal: !this.state.modal });
+    toggleAddEditCourseModal = () => {
+        this.setState({ addEditCourseModal: !this.state.addEditCourseModal });
     };
 
-    toggleDeleteModal = () => {
-        this.setState({ deleteModal: !this.state.deleteModal });
+    toggleDeleteCourseModal = () => {
+        this.setState({ deleteCourseModal: !this.state.deleteCourseModal });
     };
 
-    handleSubmit = item => {
-        this.toggle();
+    handleCourseSubmit = item => {
+        this.toggleAddEditCourseModal();
         if (item.id) {
             axios
                 .put(`http://localhost:8000/courses/${item.id}/`, item, {
@@ -68,8 +68,8 @@ class Courses extends Component {
         }
     };
 
-    handleDelete = item => {
-        this.toggleDeleteModal();
+    handleCourseDelete = item => {
+        this.toggleDeleteCourseModal();
         axios
             .delete(`http://localhost:8000/courses/${item.id}/`, {
                 auth: {
@@ -81,9 +81,9 @@ class Courses extends Component {
             .catch(err => console.log(err));
     };
 
-    createItem = () => {
+    createCourse = () => {
         const item = { name: "", tees: [], rounds: [] };
-        this.setState({ activeItem: item, modal: !this.state.modal });
+        this.setState({ activeItem: item, addEditCourseModal: !this.state.addEditCourseModal });
     };
 
     renderCourseListItem = () => {
@@ -98,10 +98,13 @@ class Courses extends Component {
                 </div>
                 <ButtonGroup>
                     <DropdownButton as={ButtonGroup} title="Edit" id="bg-nested-dropdown">
-                        <Dropdown.Item eventKey="1" onClick={() => this.setState({ activeItem: course, modal: !this.state.modal })}>Edit Course</Dropdown.Item>
-                        <Dropdown.Item eventKey="2">Edit Course Tees</Dropdown.Item>
+                        <Dropdown.Item eventKey="deleteCourse" onClick={() => this.setState({ activeItem: course, addEditCourseModal: !this.state.addEditCourseModal })}>Edit Course</Dropdown.Item>
+                        <Dropdown.Item eventKey="addCourseTees">Add Course Tees</Dropdown.Item>
+                        {course.tees.length > 0 ? (
+                            <Dropdown.Item eventKey="editCourseTees">Edit Course Tees</Dropdown.Item>
+                        ) : null}
                     </DropdownButton>
-                    <Button variant="danger" onClick={() => this.setState({ activeItem: course, deleteModal: !this.state.deleteModal })}>Delete</Button>
+                    <Button variant="danger" onClick={() => this.setState({ activeItem: course, deleteCourseModal: !this.state.deleteCourseModal })}>Delete</Button>
                 </ButtonGroup>
             </ListGroup.Item >
         ));
@@ -120,7 +123,7 @@ class Courses extends Component {
                     <Col md="6">
                         <ListGroup>
                             <ListGroup.Item>
-                                <Button onClick={this.createItem} variant="primary">
+                                <Button onClick={this.createCourse} variant="primary">
                                     Add Course
                                 </Button>
                             </ListGroup.Item>
@@ -129,20 +132,20 @@ class Courses extends Component {
                     </Col>
                     <Col md="3"></Col>
                 </Row>
-                {this.state.modal ? (
+                {this.state.addEditCourseModal ? (
                     <AddCourseModal
                         activeItem={this.state.activeItem}
-                        toggle={this.toggle}
-                        onSave={this.handleSubmit}
-                        show={this.state.modal}
+                        toggle={this.toggleAddEditCourseModal}
+                        onSubmit={this.handleCourseSubmit}
+                        show={this.state.addEditCourseModal}
                     />
                 ) : null}
-                {this.state.deleteModal ? (
+                {this.state.deleteCourseModal ? (
                     <DeleteCourseModal
                         activeItem={this.state.activeItem}
-                        toggle={this.toggleDeleteModal}
-                        onDelete={this.handleDelete}
-                        show={this.state.deleteModal}
+                        toggle={this.toggleDeleteCourseModal}
+                        onSubmit={this.handleCourseDelete}
+                        show={this.state.deleteCourseModal}
                     />
                 ) : null}
             </Container>

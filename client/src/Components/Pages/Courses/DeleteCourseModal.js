@@ -12,7 +12,7 @@ class DeleteCourseModal extends Component {
     }
 
     render() {
-        const { toggle, onDelete, show } = this.props;
+        const { toggle, onSubmit, show } = this.props;
         return (
             <Modal show={show} onHide={toggle}>
                 <Modal.Header closeButton>
@@ -25,7 +25,7 @@ class DeleteCourseModal extends Component {
                     <Button variant="secondary" onClick={toggle}>
                         Cancel
                     </Button>
-                    <Button variant="danger" onClick={() => onDelete(this.state.activeItem)}>
+                    <Button variant="danger" onClick={() => onSubmit(this.state.activeItem)}>
                         Delete
                     </Button>
                 </Modal.Footer>
