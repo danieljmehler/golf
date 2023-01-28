@@ -9,6 +9,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import AddCourseModal from "./Courses/AddCourseModal"
+import DeleteCourseModal from "./Courses/DeleteCourseModal"
 
 class Courses extends Component {
     constructor(props) {
@@ -38,6 +39,10 @@ class Courses extends Component {
         this.setState({ modal: !this.state.modal });
     };
 
+    toggleDeleteModal = () => {
+        this.setState({ deleteModal: !this.state.deleteModal });
+    };
+
     handleSubmit = item => {
         this.toggle();
         if (item.id) {
@@ -63,6 +68,19 @@ class Courses extends Component {
         }
     };
 
+    handleDelete = item => {
+        this.toggleDeleteModal();
+        axios
+            .delete(`http://localhost:8000/courses/${item.id}/`, {
+                auth: {
+                    username: "admin",
+                    password: "admin"
+                }
+            })
+            .then(res => this.refreshList())
+            .catch(err => console.log(err));
+    };
+
     createItem = () => {
         const item = { name: "", tees: [], rounds: [] };
         this.setState({ activeItem: item, modal: !this.state.modal });
@@ -73,16 +91,18 @@ class Courses extends Component {
             <ListGroup.Item
                 key={course.id}
                 as="li"
-                className="d-flex justify-content-between align-items-start"
-            >
+                className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">{course.name}</div>
                     # Holes | Par # | # Yards
                 </div>
-                <DropdownButton as={ButtonGroup} title="Edit" id="bg-nested-dropdown">
-                    <Dropdown.Item eventKey="1" onClick={() => this.setState({ activeItem: course, modal: !this.state.modal })}>Edit Course</Dropdown.Item>
-                    <Dropdown.Item eventKey="2">Edit Course Tees</Dropdown.Item>
-                </DropdownButton>
+                <ButtonGroup>
+                    <DropdownButton as={ButtonGroup} title="Edit" id="bg-nested-dropdown">
+                        <Dropdown.Item eventKey="1" onClick={() => this.setState({ activeItem: course, modal: !this.state.modal })}>Edit Course</Dropdown.Item>
+                        <Dropdown.Item eventKey="2">Edit Course Tees</Dropdown.Item>
+                    </DropdownButton>
+                    <Button variant="danger" onClick={() => this.setState({ activeItem: course, deleteModal: !this.state.deleteModal })}>Delete</Button>
+                </ButtonGroup>
             </ListGroup.Item >
         ));
     };
@@ -115,6 +135,14 @@ class Courses extends Component {
                         toggle={this.toggle}
                         onSave={this.handleSubmit}
                         show={this.state.modal}
+                    />
+                ) : null}
+                {this.state.deleteModal ? (
+                    <DeleteCourseModal
+                        activeItem={this.state.activeItem}
+                        toggle={this.toggleDeleteModal}
+                        onDelete={this.handleDelete}
+                        show={this.state.deleteModal}
                     />
                 ) : null}
             </Container>

@@ -25,7 +25,9 @@ class AddCourseModal extends Component {
         const { toggle, onSave, show } = this.props;
         return (
             <Modal show={show} onHide={toggle}>
-                <Modal.Header closeButton>Add Course</Modal.Header>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Course</Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group>
@@ -42,6 +44,9 @@ class AddCourseModal extends Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button variant="secondary" onClick={toggle}>
+                        Close
+                    </Button>
                     <Button color="success" onClick={() => onSave(this.state.activeItem)}>
                         Save
                     </Button>
