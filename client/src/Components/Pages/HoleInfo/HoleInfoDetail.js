@@ -8,8 +8,8 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import AddEditTeeModal from "./../Tees/AddEditTeeModal"
-import DeleteTeeModal from "./../Tees/DeleteTeeModal"
+import AddEditTeeModal from "../Tees/AddEditTeeModal"
+import DeleteTeeModal from "../Tees/DeleteTeeModal"
 
 
 class CourseDetail extends Component {

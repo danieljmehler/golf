@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
-
     tees = TeeSerializer(
         many=True,
         read_only=True
