@@ -5,4 +5,4 @@ from rest_framework import serializers
 class HoleScoreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HoleScore
-        fields = ['url', 'round', 'hole', 'score']
+        fields = ['url', 'id', 'round', 'hole', 'score']
