@@ -3,6 +3,7 @@ import { Home } from "./Components/Pages/Home";
 import CourseList from "./Components/Pages/CourseList";
 import CourseDetail from "./Components/Pages/Courses/CourseDetail";
 import TeeDetail from "./Components/Pages/Tees/TeeDetail";
+import HoleInfoDetail from "./Components/Pages/HoleInfo/HoleInfoDetail";
 import { Golfers } from "./Components/Pages/Golfers";
 import { Rounds } from "./Components/Pages/Rounds";
 import Navigation from "./Components/Navigation";
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/courses/:courseId" element={<CourseDetail />}/>
                         {/* <Route path="/tees" element={<TeeList />}/> */}
                         <Route path="/tees/:teeId" element={<TeeDetail />}/>
+                        <Route path="/hole_info/:holeInfoId" element={<HoleInfoDetail />}/>
                         <Route path="/golfers" element={<Golfers />} />
                         <Route path="/rounds" element={<Rounds />} />
                     </Routes>

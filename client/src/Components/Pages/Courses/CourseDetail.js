@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import AddEditTeeModal from "./../Tees/AddEditTeeModal"
 import DeleteTeeModal from "./../Tees/DeleteTeeModal"
 
@@ -109,7 +110,7 @@ class CourseDetail extends Component {
                 className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
-                        <Link to={`/tees/${tee.id}`} state={tee}>{tee.name}</Link>
+                        <Link to={`/tees/${tee.id}`} state={{ course: this.state.course }}>{tee.name}</Link>
                     </div>
                 </div>
 
@@ -124,9 +125,18 @@ class CourseDetail extends Component {
     render() {
         return (
             <Container fluid>
+                <Breadcrumb>
+                    <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
+                    <Breadcrumb.Item active>
+                        {this.state.course.name}
+                    </Breadcrumb.Item>
+                </Breadcrumb>
                 <Row>
                     <Col md="3"></Col>
-                    <Col md="6"><h1 className='text-center'>{this.state.course.name}</h1></Col>
+                    <Col md="6">
+                        <h1 className='text-center'>{this.state.course.name}</h1>
+                        <h2 className='text-center'>Tees</h2>
+                    </Col>
                     <Col md="3"></Col>
                 </Row>
                 <Row>
