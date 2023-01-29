@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { Link } from "react-router-dom";
+
 import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -6,12 +8,10 @@ import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import AddCourseModal from "./Courses/AddCourseModal"
+import AddEditCourseModal from "./Courses/AddEditCourseModal"
 import DeleteCourseModal from "./Courses/DeleteCourseModal"
 
-class Courses extends Component {
+class CourseList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -93,17 +93,13 @@ class Courses extends Component {
                 as="li"
                 className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
-                    <div className="fw-bold">{course.name}</div>
-                    # Holes | Par # | # Yards
+                    <div className="fw-bold">
+                        <Link to={`/courses/${course.id}`} state={course}>{course.name}</Link>
+                    </div>
                 </div>
+
                 <ButtonGroup>
-                    <DropdownButton as={ButtonGroup} title="Edit" id="bg-nested-dropdown">
-                        <Dropdown.Item eventKey="deleteCourse" onClick={() => this.setState({ activeItem: course, addEditCourseModal: !this.state.addEditCourseModal })}>Edit Course</Dropdown.Item>
-                        <Dropdown.Item eventKey="addCourseTees">Add Course Tees</Dropdown.Item>
-                        {course.tees.length > 0 ? (
-                            <Dropdown.Item eventKey="editCourseTees">Edit Course Tees</Dropdown.Item>
-                        ) : null}
-                    </DropdownButton>
+                    <Button variant="primary" onClick={() => this.setState({ activeItem: course, addEditCourseModal: !this.state.addEditCourseModal })}>Edit</Button>
                     <Button variant="danger" onClick={() => this.setState({ activeItem: course, deleteCourseModal: !this.state.deleteCourseModal })}>Delete</Button>
                 </ButtonGroup>
             </ListGroup.Item >
@@ -133,7 +129,7 @@ class Courses extends Component {
                     <Col md="3"></Col>
                 </Row>
                 {this.state.addEditCourseModal ? (
-                    <AddCourseModal
+                    <AddEditCourseModal
                         activeItem={this.state.activeItem}
                         toggle={this.toggleAddEditCourseModal}
                         onSubmit={this.handleCourseSubmit}
@@ -153,4 +149,4 @@ class Courses extends Component {
     }
 }
 
-export default Courses;
+export default CourseList;

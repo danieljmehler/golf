@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-class AddCourseModal extends Component {
+class AddEditTeeModal extends Component {
 
     constructor(props) {
         super(props);
@@ -26,19 +26,19 @@ class AddCourseModal extends Component {
         return (
             <Modal show={show} onHide={toggle}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Course</Modal.Title>
+                    <Modal.Title>Add Tees</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group>
-                            <Form.Label>Course Name</Form.Label>
+                            <Form.Label>Tees Name</Form.Label>
                             <Form.Control
                                 type="text"
                                 autoFocus
                                 name="name"
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
-                                placeholder="e.g., Freeport Country Club"
+                                placeholder="e.g., Blue"
                             />
                         </Form.Group>
                     </Form>
@@ -56,4 +56,4 @@ class AddCourseModal extends Component {
     };
 }
 
-export default AddCourseModal
+export default AddEditTeeModal
