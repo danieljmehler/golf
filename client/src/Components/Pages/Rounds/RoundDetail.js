@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import AddEditHoleScoreModal from '../HoleScore/AddEditHoleScoreModal'
@@ -159,23 +160,42 @@ class RoundDetail extends Component {
         this.setState({ activeItem: item, addEditHoleScoreModal: !this.state.addEditHoleScoreModal });
     };
 
-    renderTableRowDetails = (hole) => {
+    renderTableScoreRow = (hole) => {
         const hi = this.state.hole_info.filter(hi => hi.url === hole.hole)[0]
-        return (<>
-            <td>{hi.number}</td>
-            <td>{hi.par}</td>
-            <td>{hi.yards}</td>
-            <td>{hi.handicap}</td>
-            <td className={hole.score < hi.par ? 'table-success' : hole.score > hi.par ? 'table-danger' : ''}>{hole.score}</td>
-        </>)
+        return (
+            <td key={hole.id} className={hole.score < hi.par ? 'table-success' : hole.score > hi.par ? 'table-danger' : ''}>{hole.score}</td>
+        );
     }
 
-    renderTableRow = () => {
-        return this.state.holes.map((hole) => (
-            <tr key={hole.id}>
-                {this.renderTableRowDetails(hole)}
-            </tr>
-        ));
+    renderTableBody = () => {
+        return (
+            <tbody>
+                <tr key="yds">
+                    <th>YDS</th>
+                    {this.state.hole_info.map(hole => (
+                        <td key={hole.id}>{hole.yards}</td>
+                    ))}
+                </tr>
+                <tr key="par">
+                    <th>PAR</th>
+                    {this.state.hole_info.map(hole => (
+                        <td key={hole.id}>{hole.par}</td>
+                    ))}
+                </tr>
+                <tr key="hcp">
+                    <th>HCP</th>
+                    {this.state.hole_info.map(hole => (
+                        <td key={hole.id}>{hole.handicap}</td>
+                    ))}
+                </tr>
+                <tr key={this.state.golfer.id}>
+                    <th>{this.state.golfer.username}</th>
+                    {this.state.holes.map(hole =>
+                        this.renderTableScoreRow(hole)
+                    )}
+                </tr>
+            </tbody>
+        );
     };
 
     render() {
@@ -198,26 +218,31 @@ class RoundDetail extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table striped bordered hover className="text-center">
+                        <Table responsive bordered className="text-center">
                             <thead>
                                 <tr>
                                     <td>
                                         <Button onClick={this.createHoleScore} variant="primary">
-                                            Add Hole
+                                            Add Hole Score
                                         </Button>
                                     </td>
+                                    {this.state.holes.map(hole => (
+                                        <td key={hole.id}>
+                                            <ButtonGroup vertical>
+                                                <Button variant="primary" onClick={() => this.setState({ activeItem: hole, addEditHoleScoreModal: !this.state.addEditHoleScoreModal })}>Edit</Button>
+                                                <Button variant="danger" onClick={() => this.setState({ activeItem: hole, deleteHoleScoreModal: !this.state.deleteHoleScoreModal })}>Delete</Button>
+                                            </ButtonGroup>
+                                        </td>
+                                    ))}
                                 </tr>
                                 <tr>
                                     <th>Hole</th>
-                                    <th>Par</th>
-                                    <th>Yards</th>
-                                    <th>Handicap</th>
-                                    <th>Score</th>
+                                    {this.state.hole_info.map(hole_info => (
+                                        <th key={hole_info.id}>{hole_info.number}</th>
+                                    ))}
                                 </tr>
                             </thead>
-                            <tbody>
-                                {this.renderTableRow()}
-                            </tbody>
+                            {this.renderTableBody()}
                         </Table>
                     </Col>
                     <Col md="3"></Col>
@@ -234,6 +259,7 @@ class RoundDetail extends Component {
                 {this.state.deleteHoleScoreModal ? (
                     <DeleteHoleScoreModal
                         activeItem={this.state.activeItem}
+                        round={this.state.round}
                         toggle={this.toggleDeleteHoleScoreModal}
                         onSubmit={this.handleHoleScoreDelete}
                         show={this.state.deleteHoleScoreModal}

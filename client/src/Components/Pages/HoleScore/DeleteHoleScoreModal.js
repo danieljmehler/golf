@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
@@ -7,20 +8,32 @@ class DeleteHoleInfoModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tee: this.props.tee,
-            activeItem: this.props.activeItem
+            round: this.props.round,
+            activeItem: this.props.activeItem,
+            holeinfo: ""
         };
     }
+
+    componentDidMount() {
+        this.refreshList()
+    }
+
+    refreshList = () => {
+        axios
+            .get(this.state.activeItem.hole)
+            .then(res => this.setState({ holeinfo: res.data }))
+            .catch(err => console.log(err));
+    };
 
     render() {
         const { toggle, onSubmit, show } = this.props;
         return (
             <Modal show={show} onHide={toggle}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Delete Course</Modal.Title>
+                    <Modal.Title>Delete Hole Score</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Are you sure you want to delete hole {this.state.activeItem.name} for the "{this.state.tee.name}" tees?
+                    Are you sure you want to delete score ({this.state.activeItem.score}) for Hole #{this.state.holeinfo.number} for the "{this.state.round.date}" round?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={toggle}>
