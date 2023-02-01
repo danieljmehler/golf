@@ -48,12 +48,6 @@ class AddEditRoundModal extends Component {
 
     handleChange = (event, hole) => {
         let { name, value } = event.target;
-        console.log("event.target")
-        console.log(event.target)
-        console.log("name")
-        console.log(name)
-        console.log('value')
-        console.log(value)
         if (event.target.type === "checkbox") {
             value = event.target.checked;
         } else if (hole) {
@@ -74,29 +68,14 @@ class AddEditRoundModal extends Component {
     handleCourseChange = event => {
         let { name, value } = event.target;
         let tees = this.state.tees
-        console.log("event.target")
-        console.log(event.target)
-        console.log("name")
-        console.log(name)
-        console.log('value')
-        console.log(value)
         let course = this.state.courses.filter(course => course.url === value)[0]
-        console.log("course:")
-        console.log(course)
         let promises = []
         course.tees.forEach((tee) => {
             promises.push(axios.get(tee))
         });
-        console.log('promises')
-        console.log(promises)
         Promise.all(promises)
         .then(res=> {
-            console.log("After getting tees")
-            console.log('res')
-            console.log(res)
             tees = res.map(tee => tee.data)
-            console.log('tees')
-            console.log(tees)
             return Promise.all([])
         })
         .then(res => this.setState({
@@ -118,9 +97,6 @@ class AddEditRoundModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <pre>{JSON.stringify(this.state.activeItem)}</pre>
-                        <pre>{JSON.stringify(this.state.courses)}</pre>
-                        <pre>{JSON.stringify(this.state.tees)}</pre>
                         <Form.Group>
                             <Form.Label>Golfer</Form.Label>
                             <Form.Select

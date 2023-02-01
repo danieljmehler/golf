@@ -6,6 +6,7 @@ import TeeDetail from "./Components/Pages/Tees/TeeDetail";
 import HoleInfoDetail from "./Components/Pages/HoleInfo/HoleInfoDetail";
 import { Golfers } from "./Components/Pages/Golfers";
 import RoundList from "./Components/Pages/RoundList";
+import RoundDetail from "./Components/Pages/Rounds/RoundDetail";
 import Navigation from "./Components/Navigation";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                         <Route path="/hole_info/:holeInfoId" element={<HoleInfoDetail />}/>
                         <Route path="/golfers" element={<Golfers />} />
                         <Route path="/rounds" element={<RoundList />} />
+                        <Route path="rounds/:roundId" element={<RoundDetail />} />
                     </Routes>
                 </div>
             </Router>
