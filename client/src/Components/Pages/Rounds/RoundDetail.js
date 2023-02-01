@@ -9,8 +9,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import AddEditTeeModal from "./../Tees/AddEditTeeModal"
-import DeleteTeeModal from "./../Tees/DeleteTeeModal"
+import AddEditTeeModal from "../Tees/AddEditTeeModal"
+import DeleteTeeModal from "../Tees/DeleteTeeModal"
 
 
 class CourseDetail extends Component {
@@ -28,8 +28,7 @@ class CourseDetail extends Component {
                 name: "",
                 course: {},
                 holes: [] // HoleInfo
-            },
-            tees: []
+            }
         };
     }
 
@@ -38,28 +37,15 @@ class CourseDetail extends Component {
     }
 
     refreshList = () => {
-        let course = this.state.course
-        let tees = this.state.tees
         axios
             .get("http://localhost:8000/courses/" + this.state.id)
-            .then(res => {
-                course = res.data;
-                return Promise.all([])
-            })
-            .then(res => {
-                let promises = []
-                course.tees.forEach((tee) => {
-                    promises.push(axios.get(tee))
-                });
-                return Promise.all(promises)
-            })
-            .then(res => {
-                tees = res.map(tee => tee.data)
-                return Promise.all([])
-            })
             .then(res => this.setState({
-                course: course,
-                tees: tees
+                course: res.data,
+                activeItem: {
+                    name: "",
+                    course: res.data.id,
+                    holes: []
+                }
             }))
             .catch(err => console.log(err));
     };
@@ -117,7 +103,7 @@ class CourseDetail extends Component {
     };
 
     renderTeeListItem = () => {
-        return this.state.tees.map((tee) => (
+        return this.state.course.tees.map((tee) => (
             <ListGroup.Item
                 key={tee.id}
                 as="li"
@@ -139,14 +125,12 @@ class CourseDetail extends Component {
     render() {
         return (
             <Container fluid>
-                <Row>
-                    <Breadcrumb>
-                        <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
-                        <Breadcrumb.Item active>
-                            {this.state.course.name}
-                        </Breadcrumb.Item>
-                    </Breadcrumb>
-                </Row>
+                <Breadcrumb>
+                    <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
+                    <Breadcrumb.Item active>
+                        {this.state.course.name}
+                    </Breadcrumb.Item>
+                </Breadcrumb>
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">

@@ -13,13 +13,9 @@ class HoleInfoDetail extends Component {
 
     constructor(props) {
         super(props);
-
-        const course = props.location.state ? props.location.state.course : "";
-        const tee = props.location.state ? props.location.state.tee : "";
-
         this.state = {
-            course: course,
-            tee: tee,
+            course: "",
+            tee: "",
             id: props.params.holeInfoId,
             holeinfo: {
                 number: "",
@@ -37,42 +33,25 @@ class HoleInfoDetail extends Component {
     }
 
     refreshList = () => {
-        let holeinfo = this.state.holeinfo
-        let tee = this.state.tee
-        let course = this.state.course
+        let holeinfo = this.state.holeinfo;
+        let tee = this.state.tee;
+        let course = this.course;
         axios
             .get(`http://localhost:8000/hole_info/${this.state.id}/`)
             .then(res => {
                 holeinfo = res.data;
-                return Promise.resolve([]);
+                return Promise.all([]);
             })
-            .catch(err => console.log(err))
+            .then(res => axios.get(holeinfo.tee))
             .then(res => {
-                if (!tee || tee === "") {
-                    return axios.get(holeinfo.tee);
-                }
-                return Promise.resolve([]);
+                tee = res.data;
+                return Promise.all([])
             })
+            .then(res => axios.get(tee.course))
             .then(res => {
-                if (res.data) {
-                    tee = res.data
-                }
-                return Promise.resolve([]);
+                course = res.data
+                return Promise.all([])
             })
-            .catch(err => console.log(err))
-            .then(res => {
-                if (!course || course === "") {
-                    return axios.get(tee.course);
-                }
-                return Promise.resolve([]);
-            })
-            .then(res => {
-                if (res.data) {
-                    course = res.data
-                }
-                return Promise.resolve([]);
-            })
-            .catch(err => console.log(err))
             .then(res => this.setState({
                 holeinfo: holeinfo,
                 tee: tee,
