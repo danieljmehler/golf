@@ -28,7 +28,8 @@ class CourseDetail extends Component {
                 name: "",
                 course: {},
                 holes: [] // HoleInfo
-            }
+            },
+            tees: []
         };
     }
 
@@ -37,15 +38,28 @@ class CourseDetail extends Component {
     }
 
     refreshList = () => {
+        let course = this.state.course
+        let tees = this.state.tees
         axios
             .get("http://localhost:8000/courses/" + this.state.id)
+            .then(res => {
+                course = res.data;
+                return Promise.all([])
+            })
+            .then(res => {
+                let promises = []
+                course.tees.forEach((tee) => {
+                    promises.push(axios.get(tee))
+                });
+                return Promise.all(promises)
+            })
+            .then(res => {
+                tees = res.map(tee => tee.data)
+                return Promise.all([])
+            })
             .then(res => this.setState({
-                course: res.data,
-                activeItem: {
-                    name: "",
-                    course: res.data.id,
-                    holes: []
-                }
+                course: course,
+                tees: tees
             }))
             .catch(err => console.log(err));
     };
@@ -103,14 +117,14 @@ class CourseDetail extends Component {
     };
 
     renderTeeListItem = () => {
-        return this.state.course.tees.map((tee) => (
+        return this.state.tees.map((tee) => (
             <ListGroup.Item
                 key={tee.id}
                 as="li"
                 className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
-                        <Link to={`/tees/${tee.id}`} state={{ course: this.state.course }}>{tee.name}</Link>
+                        <Link to={`/tees/${tee.id}`}>{tee.name}</Link>
                     </div>
                 </div>
 
@@ -125,12 +139,14 @@ class CourseDetail extends Component {
     render() {
         return (
             <Container fluid>
-                <Breadcrumb>
-                    <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
-                    <Breadcrumb.Item active>
-                        {this.state.course.name}
-                    </Breadcrumb.Item>
-                </Breadcrumb>
+                <Row>
+                    <Breadcrumb>
+                        <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
+                        <Breadcrumb.Item active>
+                            {this.state.course.name}
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </Row>
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">

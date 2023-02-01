@@ -9,7 +9,7 @@ function Navigation() {
         <Navbar.Brand href="/">
           <img
             alt=""
-            src="logo.jpg"
+            src="/logo.jpg"
             width="30"
             height="30"
             className="d-inline-block align-top"

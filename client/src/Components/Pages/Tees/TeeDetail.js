@@ -17,15 +17,15 @@ class TeeDetail extends Component {
 
     constructor(props) {
         super(props);
-        const course = props.location.state ? props.location.state.course : "";
         this.state = {
-            course: course,
+            course: "",
             id: props.params.teeId,
             tee: {
                 name: "",
                 course: "",
                 holes: []
             },
+            holes: [],
             activeItem: {  // HoleInfo
                 number: "",
                 tee: {},
@@ -35,8 +35,6 @@ class TeeDetail extends Component {
                 scores: [] // HoleScore
             }
         };
-        console.log('state at end of contstructor')
-        console.log(this.state)
     }
 
     componentDidMount() {
@@ -46,31 +44,30 @@ class TeeDetail extends Component {
     refreshList = () => {
         let tee = this.state.tee
         let course = this.state.course
+        let holes = this.state.holes
         axios
             .get(`http://localhost:8000/tees/${this.state.id}/`)
             .then(res => {
-                tee = res.data;
-                return Promise.resolve([]);
+                tee = res.data
+                return Promise.all([])
             })
-            .catch(err => console.log(err))
+            .then(res => axios.get(tee.course))
+            .then(res => this.setState({ course: res.data }))
             .then(res => {
-                if (!course || course === "") {
-                    console.log('should not get here, course is:')
-                    console.log(course)
-                    return axios.get(tee.course);
-                }
-                return Promise.resolve([]);
+                let promises = []
+                tee.holes.forEach((hole) => {
+                    promises.push(axios.get(hole))
+                });
+                return Promise.all(promises)
             })
             .then(res => {
-                if (res.data) {
-                    course = res.data
-                }
-                return Promise.resolve([]);
+                holes = res.map(hole => hole.data)
+                return Promise.all([])
             })
-            .catch(err => console.log(err))
             .then(res => this.setState({
                 tee: tee,
-                course: course
+                course: course,
+                holes: holes
             }))
             .catch(err => console.log(err));
     };
@@ -135,14 +132,14 @@ class TeeDetail extends Component {
     };
 
     renderHoleInfoListItem = () => {
-        return this.state.tee.holes.map((holeinfo) => (
+        return this.state.holes.map((holeinfo) => (
             <ListGroup.Item
                 key={holeinfo.id}
                 as="li"
                 className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
-                        <Link to={`/hole_info/${holeinfo.id}`} state={{ course: this.state.course, tee: this.state.tee }}>Hole {holeinfo.number}</Link>
+                        <Link to={`/hole_info/${holeinfo.id}`}>Hole {holeinfo.number}</Link>
                     </div>
                 </div>
 
