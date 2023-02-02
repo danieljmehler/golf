@@ -31,10 +31,10 @@ class RoundList extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         axios
             .get("http://localhost:8000/rounds/")
             .then(res => this.setState({ rounds: res.data.results }))
@@ -59,7 +59,7 @@ class RoundList extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData())
                 .catch(err => console.log(err));
         } else {
             axios
@@ -69,7 +69,7 @@ class RoundList extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData())
                 .catch(err => console.log(err));
         }
     }
@@ -83,7 +83,7 @@ class RoundList extends Component {
                     password: "admin"
                 }
             })
-            .then(res => this.refreshList())
+            .then(res => this.refreshData())
             .catch(err => console.log(err));
     }
 
@@ -106,7 +106,8 @@ class RoundList extends Component {
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
                         <Link
-                            to={`/rounds/${round.id}`}>
+                            to={`/rounds/${round.id}`}
+                            state={{ round: round }}>
                             {round.date}
                         </Link>
                     </div>

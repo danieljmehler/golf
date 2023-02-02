@@ -20,13 +20,17 @@ class CourseDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            id: props.params.courseId,
-            course: {
+
+        const course = props.location.state ?
+            props.location.state.course : {
                 name: "",
                 tees: [],
                 rounds: []
-            },
+            };
+
+        this.state = {
+            id: props.params.courseId,
+            course: course,
             activeItem: { // Tee
                 name: "",
                 course: {},
@@ -37,31 +41,43 @@ class CourseDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
-        let { course, tees } = this.state;
-        axios
+    refreshData = (force = false) => {
+        this.refreshCourse(force)
+            .then(res => this.refreshTees(res))
+            .catch(err => console.log(err));
+    }
+
+    /**
+     * TODO:
+     * This method is "async" because it always returns a Promise.
+     * But do we need to bind it to "this"? Doesn't appear so, because
+     * we can call it as "this.refreshX()" from this.refreshData().
+     * 
+     * @returns Empty Promise if referred from app, otherwise, return this.setState()
+     */
+    async refreshCourse (force = false) {
+        if (!force && this.props.location.state !== null) {
+            return Promise.all([]);
+        }
+        return axios
             .get(`http://localhost:8000/courses/${this.state.id}`)
-            .then(res => {
-                course = res.data;
-                return Promise.all([]);
-            })
-            .then(res => {
-                let promises = [];
-                course.tees.forEach((tee) => {
-                    promises.push(axios.get(tee));
-                });
-                return Promise.all(promises);
-            })
-            .then(res => {
-                tees = res.map(tee => tee.data);
-                return Promise.all([]);
-            })
+            .then(res => Promise.resolve({ course: res.data }));
+    }
+
+    refreshTees = (stateUpdate) => {
+        let tees = stateUpdate.course ? stateUpdate.course.tees : this.state.course.tees;
+        let promises = [];
+        tees.forEach((tee) => {
+            promises.push(axios.get(tee));
+        });
+        Promise
+            .all(promises)
             .then(res => this.setState({
-                course: course,
-                tees: tees
+                ...stateUpdate,
+                tees: res.map(tee => tee.data)
             }))
             .catch(err => console.log(err));
     }
@@ -97,7 +113,7 @@ class CourseDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         } else {
             axios
@@ -107,7 +123,7 @@ class CourseDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         }
     }
@@ -121,7 +137,7 @@ class CourseDetail extends Component {
                     password: "admin"
                 }
             })
-            .then(res => this.refreshList())
+            .then(res => this.refreshData(true))
             .catch(err => console.log(err));
     }
 
@@ -133,7 +149,11 @@ class CourseDetail extends Component {
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
                         <Link
-                            to={`/tees/${tee.id}`}>
+                            to={`/tees/${tee.id}`}
+                            state={{
+                                course: this.state.course,
+                                tee: tee
+                            }}>
                             {tee.name}
                         </Link>
                     </div>

@@ -19,6 +19,17 @@ class RoundDetail extends Component {
 
     constructor(props) {
         super(props);
+
+        const round = props.location.state ?
+            props.location.state.round : {
+                url: "",
+                golfer: "",
+                course: "",
+                tee: "",
+                date: "",
+                holes: []
+            }
+
         this.state = {
             course: "",
             tee: "",
@@ -26,29 +37,41 @@ class RoundDetail extends Component {
             holes: [],
             hole_info: [],
             id: props.params.roundId,
-            round: {
-                golfer: "",
-                course: "",
-                tee: "",
-                date: "",
-                holes: []
-            },
+            round: round,
             activeItem: { // HoleScore
                 hole: "",
                 score: "",
-                round: ""
+                round: round.url
             }
         };
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
-        let { round, tee, course, golfer, holes, hole_info } = this.state;
-        axios
-            .get(`http://localhost:8000/rounds/${this.state.id}/`)
+    refreshData = (force = false) => {
+        this.refreshRound(force)
+            .then(res => this.refreshHoles(res))
+            .catch(err => console.log(err));
+    }
+
+    /**
+     * TODO:
+     * This method is "async" because it always returns a Promise.
+     * But do we need to bind it to "this"? Doesn't appear so, because
+     * we can call it as "this.refreshX()" from this.refreshData().
+     * 
+     * @returns Empty Promise if referred from app, otherwise, return this.setState()
+     */
+    async refreshRound(force = false) {
+        if (!force && this.props.location.state !== null) {
+            return Promise.all([]);
+        }
+
+        let { round, golfer, tee } = this.state;
+        return axios
+            .get(`http://localhost:8000/rounds/${this.state.id}`)
             .then(res => {
                 round = res.data;
                 return Promise.all([]);
@@ -69,17 +92,22 @@ class RoundDetail extends Component {
                 return Promise.all([]);
             })
             .then(res => axios.get(tee.course))
-            .then(res => {
-                course = res.data;
-                return Promise.all([]);
-            })
-            .then(res => {
-                let promises = [];
-                round.holes.forEach((hole) => {
-                    promises.push(axios.get(hole));
-                });
-                return Promise.all(promises);
-            })
+            .then(res => Promise.resolve({
+                round: round,
+                golfer: golfer,
+                tee: tee,
+                course: res.data
+            }));
+    }
+
+    refreshHoles = (stateUpdate) => {
+        let holes = stateUpdate.round ? stateUpdate.round.holes : this.state.round.holes;
+        let promises = [];
+        holes.forEach((hole) => {
+            promises.push(axios.get(hole));
+        });
+        Promise
+            .all(promises)
             .then(res => {
                 holes = res.map(hole => hole.data);
                 return Promise.all([]);
@@ -91,17 +119,10 @@ class RoundDetail extends Component {
                 });
                 return Promise.all(promises);
             })
-            .then(res => {
-                hole_info = res.map(hole => hole.data);
-                return Promise.all([]);
-            })
             .then(res => this.setState({
-                round: round,
-                golfer: golfer,
-                tee: tee,
-                course: course,
+                ...stateUpdate,
                 holes: holes,
-                hole_info: hole_info
+                hole_info: res.map(hole => hole.data)
             }))
             .catch(err => console.log(err));
     }
@@ -124,7 +145,7 @@ class RoundDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         } else {
             axios
@@ -134,7 +155,7 @@ class RoundDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         }
     }
@@ -148,7 +169,7 @@ class RoundDetail extends Component {
                     password: "admin"
                 }
             })
-            .then(res => this.refreshList())
+            .then(res => this.refreshData(true))
             .catch(err => console.log(err));
     }
 

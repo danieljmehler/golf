@@ -29,10 +29,10 @@ class CourseList extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         axios
             .get("http://localhost:8000/courses/")
             .then(res => this.setState({ courses: res.data.results }))
@@ -57,7 +57,7 @@ class CourseList extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData())
                 .catch(err => console.log(err));
         } else {
             axios
@@ -67,7 +67,7 @@ class CourseList extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData())
                 .catch(err => console.log(err));
         }
     }
@@ -81,7 +81,7 @@ class CourseList extends Component {
                     password: "admin"
                 }
             })
-            .then(res => this.refreshList())
+            .then(res => this.refreshData())
             .catch(err => console.log(err));
     }
 
@@ -98,7 +98,8 @@ class CourseList extends Component {
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
                         <Link
-                            to={`/courses/${course.id}`}>
+                            to={`/courses/${course.id}`}
+                            state={{ course: course }}>
                             {course.name}
                         </Link>
                     </div>

@@ -19,10 +19,10 @@ class AddEditHoleScoreModal extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         let tee = this.state.tee;
         axios
             .get(this.state.round.tee)

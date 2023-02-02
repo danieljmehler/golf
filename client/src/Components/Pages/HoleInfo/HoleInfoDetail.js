@@ -13,27 +13,36 @@ class HoleInfoDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            course: "",
+
+        const course = props.location.state ? props.location.state.course : "";
+        const tee = props.location.state ? props.location.state.tee : "";
+        const holeinfo = props.location.state ? props.location.state.holeinfo : {
+            number: "",
             tee: "",
+            par: "",
+            handicap: "",
+            yards: "",
+            scores: []
+        };
+
+        this.state = {
+            course: course,
+            tee: tee,
             id: props.params.holeInfoId,
-            holeinfo: {
-                number: "",
-                tee: "",
-                par: "",
-                handicap: "",
-                yards: "",
-                scores: []
-            }
+            holeinfo: holeinfo
         };
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
-        let { holeinfo, tee, course } = this.state;
+    refreshData = () => {
+        if (this.props.location.state !== null) {
+            return;
+        }
+
+        let { holeinfo, tee } = this.state;
         axios
             .get(`http://localhost:8000/hole_info/${this.state.id}/`)
             .then(res => {
@@ -46,14 +55,10 @@ class HoleInfoDetail extends Component {
                 return Promise.all([]);
             })
             .then(res => axios.get(tee.course))
-            .then(res => {
-                course = res.data;
-                return Promise.all([]);
-            })
             .then(res => this.setState({
                 holeinfo: holeinfo,
                 tee: tee,
-                course: course
+                course: res.data
             }))
             .catch(err => console.log(err));
     }
@@ -92,10 +97,10 @@ class HoleInfoDetail extends Component {
                     <Col md="3"></Col>
                     <Col md="6">
                         <Table
-                        striped
-                        bordered
-                        hover
-                        className="text-center">
+                            striped
+                            bordered
+                            hover
+                            className="text-center">
                             <thead>
                                 <tr>
                                     <th className="col-md-4">Par</th>

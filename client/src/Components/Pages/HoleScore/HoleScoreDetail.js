@@ -29,10 +29,10 @@ class HoleInfoDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         let { holeinfo, tee, course } = this.state;
         axios
             .get(`http://localhost:8000/hole_info/${this.state.id}/`)
