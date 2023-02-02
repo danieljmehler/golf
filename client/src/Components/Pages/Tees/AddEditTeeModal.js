@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+// Library imports
+import { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+
 
 class AddEditTeeModal extends Component {
 
@@ -14,9 +16,6 @@ class AddEditTeeModal extends Component {
 
     handleChange = event => {
         let { name, value } = event.target;
-        if (event.target.type === "checkbox") {
-            value = event.target.checked;
-        }
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
     }
@@ -24,8 +23,11 @@ class AddEditTeeModal extends Component {
     render() {
         const { toggle, onSubmit, show } = this.props;
         return (
-            <Modal show={show} onHide={toggle}>
-                <Modal.Header closeButton>
+            <Modal
+                show={show}
+                onHide={toggle}>
+                <Modal.Header
+                    closeButton>
                     <Modal.Title>Add Tees</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -33,27 +35,31 @@ class AddEditTeeModal extends Component {
                         <Form.Group>
                             <Form.Label>Tees Name</Form.Label>
                             <Form.Control
-                                type="text"
                                 autoFocus
+                                type="text"
                                 name="name"
                                 value={this.state.activeItem.name}
-                                onChange={this.handleChange}
                                 placeholder="e.g., Blue"
+                                onChange={this.handleChange}
                             />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={toggle}>
+                    <Button
+                        variant="secondary"
+                        onClick={toggle}>
                         Close
                     </Button>
-                    <Button color="success" onClick={() => onSubmit(this.state.activeItem)}>
+                    <Button
+                        variant="success"
+                        onClick={() => onSubmit(this.state.activeItem)}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
         );
-    };
+    }
 }
 
-export default AddEditTeeModal
+export default AddEditTeeModal;

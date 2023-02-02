@@ -1,7 +1,7 @@
+// Library imports
 import { Component } from 'react';
 import { useLocation, useParams } from "react-router-dom"
 import axios from 'axios';
-import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -9,8 +9,10 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import AddEditHoleScoreModal from '../HoleScore/AddEditHoleScoreModal'
-import DeleteHoleScoreModal from '../HoleScore/DeleteHoleScoreModal'
+
+// Local imports
+import AddEditHoleScoreModal from '../HoleScore/AddEditHoleScoreModal';
+import DeleteHoleScoreModal from '../HoleScore/DeleteHoleScoreModal';
 
 
 class RoundDetail extends Component {
@@ -40,16 +42,11 @@ class RoundDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList()
+        this.refreshList();
     }
 
     refreshList = () => {
-        let round = this.state.round;
-        let tee = this.state.tee;
-        let course = this.state.course;
-        let golfer = this.state.golfer;
-        let holes = this.state.holes;
-        let hole_info = this.state.hole_info;
+        let { round, tee, course, golfer, holes, hole_info } = this.state;
         axios
             .get(`http://localhost:8000/rounds/${this.state.id}/`)
             .then(res => {
@@ -63,40 +60,40 @@ class RoundDetail extends Component {
                 }
             }))
             .then(res => {
-                golfer = res.data
-                return Promise.all([])
+                golfer = res.data;
+                return Promise.all([]);
             })
             .then(res => axios.get(round.tee))
             .then(res => {
                 tee = res.data;
-                return Promise.all([])
+                return Promise.all([]);
             })
             .then(res => axios.get(tee.course))
             .then(res => {
-                course = res.data
-                return Promise.all([])
+                course = res.data;
+                return Promise.all([]);
             })
             .then(res => {
-                let promises = []
+                let promises = [];
                 round.holes.forEach((hole) => {
-                    promises.push(axios.get(hole))
+                    promises.push(axios.get(hole));
                 });
-                return Promise.all(promises)
+                return Promise.all(promises);
             })
             .then(res => {
-                holes = res.map(hole => hole.data)
-                return Promise.all([])
+                holes = res.map(hole => hole.data);
+                return Promise.all([]);
             })
             .then(res => {
-                let promises = []
+                let promises = [];
                 holes.forEach((hole) => {
-                    promises.push(axios.get(hole.hole))
+                    promises.push(axios.get(hole.hole));
                 });
-                return Promise.all(promises)
+                return Promise.all(promises);
             })
             .then(res => {
-                hole_info = res.map(hole => hole.data)
-                return Promise.all([])
+                hole_info = res.map(hole => hole.data);
+                return Promise.all([]);
             })
             .then(res => this.setState({
                 round: round,
@@ -107,15 +104,15 @@ class RoundDetail extends Component {
                 hole_info: hole_info
             }))
             .catch(err => console.log(err));
-    };
+    }
 
     toggleAddEditHoleScoreModal = () => {
         this.setState({ addEditHoleScoreModal: !this.state.addEditHoleScoreModal });
-    };
+    }
 
     toggleDeleteHoleScoreModal = () => {
         this.setState({ deleteHoleScoreModal: !this.state.deleteHoleScoreModal });
-    };
+    }
 
     handleHoleScoreSubmit = item => {
         this.toggleAddEditHoleScoreModal();
@@ -140,7 +137,7 @@ class RoundDetail extends Component {
                 .then(res => this.refreshList())
                 .catch(err => console.log(err));
         }
-    };
+    }
 
     handleHoleScoreDelete = item => {
         this.toggleDeleteHoleScoreModal();
@@ -153,57 +150,85 @@ class RoundDetail extends Component {
             })
             .then(res => this.refreshList())
             .catch(err => console.log(err));
-    };
+    }
 
     createHoleScore = () => {
-        const item = { hole: "", round: this.state.round.url, score: "" };
-        this.setState({ activeItem: item, addEditHoleScoreModal: !this.state.addEditHoleScoreModal });
-    };
+        const item = {
+            hole: "",
+            round: this.state.round.url,
+            score: ""
+        };
+        this.setState({
+            activeItem: item,
+            addEditHoleScoreModal: !this.state.addEditHoleScoreModal
+        });
+    }
 
-    renderTableScoreRow = (hole) => {
-        const hi = this.state.hole_info.filter(hi => hi.url === hole.hole)[0]
+    renderTableScoreRow = hole => {
+        const holeinfo = this.state.hole_info.find(holeinfo => holeinfo.url === hole.hole);
         return (
-            <td key={hole.id} className={hole.score < hi.par ? 'table-success' : hole.score > hi.par ? 'table-danger' : ''}>{hole.score}</td>
+            <td
+                key={hole.id}
+                className={hole.score < holeinfo.par ? 'table-success' : hole.score > holeinfo.par ? 'table-danger' : ''}>
+                {hole.score}
+            </td>
         );
     }
 
     renderTableBody = () => {
         return (
             <tbody>
-                <tr key="yds">
+                <tr
+                    key="yds">
                     <th>YDS</th>
-                    {this.state.hole_info.map(hole => (
-                        <td key={hole.id}>{hole.yards}</td>
-                    ))}
+                    {this.state.hole_info.map(hole =>
+                        <td
+                            key={hole.id}>
+                            {hole.yards}
+                        </td>
+                    )}
                 </tr>
                 <tr key="par">
                     <th>PAR</th>
-                    {this.state.hole_info.map(hole => (
-                        <td key={hole.id}>{hole.par}</td>
-                    ))}
+                    {this.state.hole_info.map(hole =>
+                        <td
+                            key={hole.id}>
+                            {hole.par}
+                        </td>
+                    )}
                 </tr>
                 <tr key="hcp">
                     <th>HCP</th>
-                    {this.state.hole_info.map(hole => (
-                        <td key={hole.id}>{hole.handicap}</td>
-                    ))}
+                    {this.state.hole_info.map(hole =>
+                        <td
+                            key={hole.id}>
+                            {hole.handicap}
+                        </td>
+                    )}
                 </tr>
-                <tr key={this.state.golfer.id}>
+                <tr
+                    key={this.state.golfer.id}>
                     <th>{this.state.golfer.username}</th>
-                    {this.state.holes.map(hole =>
+                    {this.state.holes.map((hole) =>
                         this.renderTableScoreRow(hole)
                     )}
                 </tr>
             </tbody>
         );
-    };
+    }
 
     render() {
         return (
             <Container fluid>
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/rounds">Rounds</Breadcrumb.Item>
-                    <Breadcrumb.Item active>{this.state.round.date}</Breadcrumb.Item>
+                    <Breadcrumb.Item
+                        href="/rounds">
+                        Rounds
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item
+                        active>
+                        {this.state.round.date}
+                    </Breadcrumb.Item>
                 </Breadcrumb>
                 <Row>
                     <Col md="2"></Col>
@@ -218,28 +243,45 @@ class RoundDetail extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table responsive bordered className="text-center">
+                        <Table
+                            responsive
+                            bordered
+                            className="text-center">
                             <thead>
                                 <tr>
                                     <td>
-                                        <Button onClick={this.createHoleScore} variant="primary">
+                                        <Button
+                                            variant="primary"
+                                            onClick={this.createHoleScore}>
                                             Add Hole Score
                                         </Button>
                                     </td>
-                                    {this.state.holes.map(hole => (
-                                        <td key={hole.id}>
+                                    {this.state.holes.map((hole) =>
+                                        <td
+                                            key={hole.id}>
                                             <ButtonGroup vertical>
-                                                <Button variant="primary" onClick={() => this.setState({ activeItem: hole, addEditHoleScoreModal: !this.state.addEditHoleScoreModal })}>Edit</Button>
-                                                <Button variant="danger" onClick={() => this.setState({ activeItem: hole, deleteHoleScoreModal: !this.state.deleteHoleScoreModal })}>Delete</Button>
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => this.setState({ activeItem: hole, addEditHoleScoreModal: !this.state.addEditHoleScoreModal })}>
+                                                    Edit
+                                                </Button>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={() => this.setState({ activeItem: hole, deleteHoleScoreModal: !this.state.deleteHoleScoreModal })}>
+                                                    Delete
+                                                </Button>
                                             </ButtonGroup>
                                         </td>
-                                    ))}
+                                    )}
                                 </tr>
                                 <tr>
                                     <th>Hole</th>
-                                    {this.state.hole_info.map(hole_info => (
-                                        <th key={hole_info.id}>{hole_info.number}</th>
-                                    ))}
+                                    {this.state.hole_info.map((hole_info) =>
+                                        <th
+                                            key={hole_info.id}>
+                                            {hole_info.number}
+                                        </th>
+                                    )}
                                 </tr>
                             </thead>
                             {this.renderTableBody()}
@@ -252,8 +294,8 @@ class RoundDetail extends Component {
                         activeItem={this.state.activeItem}
                         round={this.state.round}
                         toggle={this.toggleAddEditHoleScoreModal}
-                        onSubmit={this.handleHoleScoreSubmit}
                         show={this.state.addEditHoleScoreModal}
+                        onSubmit={this.handleHoleScoreSubmit}
                     />
                 ) : null}
                 {this.state.deleteHoleScoreModal ? (
@@ -261,23 +303,25 @@ class RoundDetail extends Component {
                         activeItem={this.state.activeItem}
                         round={this.state.round}
                         toggle={this.toggleDeleteHoleScoreModal}
-                        onSubmit={this.handleHoleScoreDelete}
                         show={this.state.deleteHoleScoreModal}
+                        onSubmit={this.handleHoleScoreDelete}
                     />
                 ) : null}
             </Container>
         );
-    };
+    }
 }
 
 const Fn = (props) => {
-    const params = useParams()
-    const location = useLocation()
+    const params = useParams();
+    const location = useLocation();
+
     return (
         <RoundDetail
             {...props}
             params={params}
             location={location}
         />);
-};
+}
+
 export default Fn;
