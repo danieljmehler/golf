@@ -1,6 +1,8 @@
+// Library imports
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+
 
 function Navigation() {
   return (
@@ -8,7 +10,7 @@ function Navigation() {
       <Container>
         <Navbar.Brand href="/">
           <img
-            alt=""
+            alt="logo"
             src="/logo.jpg"
             width="30"
             height="30"

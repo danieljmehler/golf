@@ -1,7 +1,7 @@
+// Library imports
 import { Component } from 'react';
 import { useLocation, useParams } from "react-router-dom"
 import axios from 'axios';
-import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -29,13 +29,11 @@ class HoleInfoDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList()
+        this.refreshList();
     }
 
     refreshList = () => {
-        let holeinfo = this.state.holeinfo;
-        let tee = this.state.tee;
-        let course = this.state.course;
+        let { holeinfo, tee, course } = this.state;
         axios
             .get(`http://localhost:8000/hole_info/${this.state.id}/`)
             .then(res => {
@@ -45,12 +43,12 @@ class HoleInfoDetail extends Component {
             .then(res => axios.get(holeinfo.tee))
             .then(res => {
                 tee = res.data;
-                return Promise.all([])
+                return Promise.all([]);
             })
             .then(res => axios.get(tee.course))
             .then(res => {
-                course = res.data
-                return Promise.all([])
+                course = res.data;
+                return Promise.all([]);
             })
             .then(res => this.setState({
                 holeinfo: holeinfo,
@@ -58,20 +56,28 @@ class HoleInfoDetail extends Component {
                 course: course
             }))
             .catch(err => console.log(err));
-    };
+    }
 
     render() {
         return (
             <Container fluid>
                 <Breadcrumb>
-                    <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
-                    <Breadcrumb.Item href={`/courses/${this.state.course.id}`}>
+                    <Breadcrumb.Item
+                        href="/courses">
+                        Courses
+                    </Breadcrumb.Item>
+                    <Breadcrumb.Item
+                        href={`/courses/${this.state.course.id}`}>
                         {this.state.course.name}
                     </Breadcrumb.Item>
-                    <Breadcrumb.Item href={`/tees/${this.state.tee.id}`}>
+                    <Breadcrumb.Item
+                        href={`/tees/${this.state.tee.id}`}>
                         {this.state.tee.name}
                     </Breadcrumb.Item>
-                    <Breadcrumb.Item active>Hole {this.state.holeinfo.number}</Breadcrumb.Item>
+                    <Breadcrumb.Item
+                        active>
+                        Hole {this.state.holeinfo.number}
+                    </Breadcrumb.Item>
                 </Breadcrumb>
                 <Row>
                     <Col md="2"></Col>
@@ -85,7 +91,11 @@ class HoleInfoDetail extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table striped bordered hover className="text-center">
+                        <Table
+                        striped
+                        bordered
+                        hover
+                        className="text-center">
                             <thead>
                                 <tr>
                                     <th className="col-md-4">Par</th>
@@ -106,17 +116,19 @@ class HoleInfoDetail extends Component {
                 </Row>
             </Container>
         );
-    };
+    }
 }
 
 const Fn = (props) => {
-    const params = useParams()
-    const location = useLocation()
+    const params = useParams();
+    const location = useLocation();
+
     return (
         <HoleInfoDetail
             {...props}
             params={params}
             location={location}
         />);
-};
+}
+
 export default Fn;

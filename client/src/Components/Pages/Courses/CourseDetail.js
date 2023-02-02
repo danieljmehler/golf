@@ -1,7 +1,8 @@
+
+// Library imports
 import { Component } from 'react';
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useLocation } from "react-router-dom"
 import axios from 'axios';
-import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -9,6 +10,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
+
+// Local imports
 import AddEditTeeModal from "./../Tees/AddEditTeeModal"
 import DeleteTeeModal from "./../Tees/DeleteTeeModal"
 
@@ -34,48 +37,54 @@ class CourseDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList()
+        this.refreshList();
     }
 
     refreshList = () => {
-        let course = this.state.course
-        let tees = this.state.tees
+        let { course, tees } = this.state;
         axios
-            .get("http://localhost:8000/courses/" + this.state.id)
+            .get(`http://localhost:8000/courses/${this.state.id}`)
             .then(res => {
                 course = res.data;
-                return Promise.all([])
+                return Promise.all([]);
             })
             .then(res => {
-                let promises = []
+                let promises = [];
                 course.tees.forEach((tee) => {
-                    promises.push(axios.get(tee))
+                    promises.push(axios.get(tee));
                 });
-                return Promise.all(promises)
+                return Promise.all(promises);
             })
             .then(res => {
-                tees = res.map(tee => tee.data)
-                return Promise.all([])
+                tees = res.map(tee => tee.data);
+                return Promise.all([]);
             })
             .then(res => this.setState({
                 course: course,
                 tees: tees
             }))
             .catch(err => console.log(err));
-    };
+    }
 
     toggleAddEditTeeModal = () => {
         this.setState({ addEditTeeModal: !this.state.addEditTeeModal });
-    };
+    }
 
     toggleDeleteTeeModal = () => {
         this.setState({ deleteTeeModal: !this.state.deleteTeeModal });
-    };
+    }
 
     createTee = course => {
-        const item = { name: "", course: course.id, holes: [] };
-        this.setState({ activeItem: item, addEditTeeModal: !this.state.addEditTeeModal });
-    };
+        const item = {
+            name: "",
+            course: course.id,
+            holes: []
+        };
+        this.setState({
+            activeItem: item,
+            addEditTeeModal: !this.state.addEditTeeModal
+        });
+    }
 
     handleTeeSubmit = item => {
         item.course = this.state.course.url;
@@ -101,7 +110,7 @@ class CourseDetail extends Component {
                 .then(res => this.refreshList())
                 .catch(err => console.log(err));
         }
-    };
+    }
 
     handleTeeDelete = item => {
         this.toggleDeleteTeeModal();
@@ -114,35 +123,49 @@ class CourseDetail extends Component {
             })
             .then(res => this.refreshList())
             .catch(err => console.log(err));
-    };
+    }
 
     renderTeeListItem = () => {
-        return this.state.tees.map((tee) => (
+        return this.state.tees.map((tee) =>
             <ListGroup.Item
                 key={tee.id}
-                as="li"
                 className="d-flex justify-content-between align-items-start">
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
-                        <Link to={`/tees/${tee.id}`}>{tee.name}</Link>
+                        <Link
+                            to={`/tees/${tee.id}`}>
+                            {tee.name}
+                        </Link>
                     </div>
                 </div>
 
                 <ButtonGroup>
-                    <Button variant="primary" onClick={() => this.setState({ activeItem: tee, addEditTeeModal: !this.state.addEditTeeModal })}>Edit</Button>
-                    <Button variant="danger" onClick={() => this.setState({ activeItem: tee, deleteTeeModal: !this.state.deleteTeeModal })}>Delete</Button>
+                    <Button
+                        variant="primary"
+                        onClick={() => this.setState({ activeItem: tee, addEditTeeModal: !this.state.addEditTeeModal })}>
+                        Edit
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={() => this.setState({ activeItem: tee, deleteTeeModal: !this.state.deleteTeeModal })}>
+                        Delete
+                    </Button>
                 </ButtonGroup>
             </ListGroup.Item >
-        ));
-    };
+        );
+    }
 
     render() {
         return (
             <Container fluid>
                 <Row>
                     <Breadcrumb>
-                        <Breadcrumb.Item href="/courses">Courses</Breadcrumb.Item>
-                        <Breadcrumb.Item active>
+                        <Breadcrumb.Item
+                            href="/courses">
+                            Courses
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item
+                            active>
                             {this.state.course.name}
                         </Breadcrumb.Item>
                     </Breadcrumb>
@@ -160,7 +183,9 @@ class CourseDetail extends Component {
                     <Col md="6">
                         <ListGroup>
                             <ListGroup.Item>
-                                <Button onClick={this.createTee} variant="primary">
+                                <Button
+                                    variant="primary"
+                                    onClick={this.createTee}>
                                     Add Tees
                                 </Button>
                             </ListGroup.Item>
@@ -173,29 +198,33 @@ class CourseDetail extends Component {
                     <AddEditTeeModal
                         activeItem={this.state.activeItem}
                         toggle={this.toggleAddEditTeeModal}
-                        onSubmit={this.handleTeeSubmit}
                         show={this.state.addEditTeeModal}
+                        onSubmit={this.handleTeeSubmit}
                     />
                 ) : null}
                 {this.state.deleteTeeModal ? (
                     <DeleteTeeModal
                         activeItem={this.state.activeItem}
                         toggle={this.toggleDeleteTeeModal}
-                        onSubmit={this.handleTeeDelete}
                         show={this.state.deleteTeeModal}
+                        onSubmit={this.handleTeeDelete}
                     />
                 ) : null}
             </Container>
         );
-    };
+    }
 }
 
 const Fn = (props) => {
-    const params = useParams()
+    const params = useParams();
+    const location = useLocation();
+
     return (
         <CourseDetail
             {...props}
             params={params}
+            location={location}
         />);
-};
+}
+
 export default Fn;
