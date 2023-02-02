@@ -19,10 +19,10 @@ class AddEditRoundModal extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         let { golfers, courses } = this.state;
         axios
             .get("http://localhost:8000/golfers/", {

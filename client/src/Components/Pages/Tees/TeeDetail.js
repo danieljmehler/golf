@@ -19,14 +19,19 @@ class TeeDetail extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            course: "",
-            id: props.params.teeId,
-            tee: {
+
+        const course = props.location.state ? props.location.state.course : "";
+        const tee = props.location.state ?
+            props.location.state.tee : {
                 name: "",
                 course: "",
                 holes: []
-            },
+            };
+
+        this.state = {
+            course: course,
+            id: props.params.teeId,
+            tee: tee,
             holes: [],
             activeItem: {  // HoleInfo
                 number: "",
@@ -40,37 +45,49 @@ class TeeDetail extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
-        let { tee, course, holes } = this.state;
-        axios
-            .get(`http://localhost:8000/tees/${this.state.id}/`)
+    refreshData = (force = false) => {
+        this.refreshTee(force)
+            .then(res => this.refreshHoles(res))
+            .catch(err => console.log(err));
+    }
+
+    /**
+     * TODO:
+     * This method is "async" because it always returns a Promise.
+     * But do we need to bind it to "this"? Doesn't appear so, because
+     * we can call it as "this.refreshX()" from this.refreshData().
+     * 
+     * @returns Empty Promise if referred from app, otherwise, return this.setState()
+     */
+    async refreshTee(force = false) {
+        if (!force && this.props.location.state !== null) {
+            return Promise.all([]);
+        }
+        let tee = this.state.tee;
+        return axios
+            .get(`http://localhost:8000/tees/${this.state.id}`)
             .then(res => {
                 tee = res.data;
                 return Promise.all([]);
             })
             .then(res => axios.get(tee.course))
-            .then(res => {
-                course = res.data;
-                return Promise.all([]);
-            })
-            .then(res => {
-                let promises = [];
-                tee.holes.forEach((hole) => {
-                    promises.push(axios.get(hole));
-                });
-                return Promise.all(promises);
-            })
-            .then(res => {
-                holes = res.map(hole => hole.data);
-                return Promise.all([]);
-            })
-            .then(res => this.setState({
-                tee: tee,
-                course: course,
-                holes: holes
+            .then(res => Promise.resolve({ course: res.data, tee: tee }));
+    }
+
+    refreshHoles = (stateUpdate) => {
+        let holes = stateUpdate.tee ? stateUpdate.tee.holes : this.state.tee.holes;
+        let promises = [];
+        holes.forEach((hole) => {
+            promises.push(axios.get(hole));
+        });
+        Promise
+            .all(promises)
+            .then(res => this.setState({ 
+                ...stateUpdate,
+                holes: res.map(hole => hole.data)
             }))
             .catch(err => console.log(err));
     }
@@ -109,7 +126,7 @@ class TeeDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         } else {
             axios
@@ -119,7 +136,7 @@ class TeeDetail extends Component {
                         password: "admin"
                     }
                 })
-                .then(res => this.refreshList())
+                .then(res => this.refreshData(true))
                 .catch(err => console.log(err));
         }
     }
@@ -133,7 +150,7 @@ class TeeDetail extends Component {
                     password: "admin"
                 }
             })
-            .then(res => this.refreshList())
+            .then(res => this.refreshData(true))
             .catch(err => console.log(err));
     }
 
@@ -145,7 +162,12 @@ class TeeDetail extends Component {
                 <div className="ms-2 me-auto">
                     <div className="fw-bold">
                         <Link
-                            to={`/hole_info/${holeinfo.id}`}>
+                            to={`/hole_info/${holeinfo.id}`}
+                            state={{
+                                course: this.state.course,
+                                tee: this.state.tee,
+                                holeinfo: holeinfo
+                            }}>
                             Hole {holeinfo.number}
                         </Link>
                     </div>

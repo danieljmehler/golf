@@ -17,10 +17,10 @@ class DeleteHoleInfoModal extends Component {
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshData();
     }
 
-    refreshList = () => {
+    refreshData = () => {
         axios
             .get(this.state.activeItem.hole)
             .then(res => this.setState({ holeinfo: res.data }))
