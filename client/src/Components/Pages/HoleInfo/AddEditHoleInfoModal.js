@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+// Library imports
+import { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+
 
 class AddEditHoleInfoModal extends Component {
 
@@ -14,9 +16,6 @@ class AddEditHoleInfoModal extends Component {
 
     handleChange = event => {
         let { name, value } = event.target;
-        if (event.target.type === "checkbox") {
-            value = event.target.checked;
-        }
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
     }
@@ -24,8 +23,11 @@ class AddEditHoleInfoModal extends Component {
     render() {
         const { toggle, onSubmit, show } = this.props;
         return (
-            <Modal show={show} onHide={toggle}>
-                <Modal.Header closeButton>
+            <Modal
+                show={show}
+                onHide={toggle}>
+                <Modal.Header
+                    closeButton>
                     <Modal.Title>Add Hole Info</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -33,8 +35,8 @@ class AddEditHoleInfoModal extends Component {
                         <Form.Group>
                             <Form.Label>Hole Number</Form.Label>
                             <Form.Control
-                                type="number"
                                 autoFocus
+                                type="number"
                                 name="number"
                                 value={this.state.activeItem.number}
                                 onChange={this.handleChange}
@@ -44,7 +46,6 @@ class AddEditHoleInfoModal extends Component {
                             <Form.Label>Par</Form.Label>
                             <Form.Control
                                 type="number"
-                                autoFocus
                                 name="par"
                                 value={this.state.activeItem.par}
                                 onChange={this.handleChange}
@@ -54,7 +55,6 @@ class AddEditHoleInfoModal extends Component {
                             <Form.Label>Handicap</Form.Label>
                             <Form.Control
                                 type="number"
-                                autoFocus
                                 name="handicap"
                                 value={this.state.activeItem.handicap}
                                 onChange={this.handleChange}
@@ -64,7 +64,6 @@ class AddEditHoleInfoModal extends Component {
                             <Form.Label>Yards</Form.Label>
                             <Form.Control
                                 type="number"
-                                autoFocus
                                 name="yards"
                                 value={this.state.activeItem.yards}
                                 onChange={this.handleChange}
@@ -73,16 +72,20 @@ class AddEditHoleInfoModal extends Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={toggle}>
+                    <Button
+                        variant="secondary"
+                        onClick={toggle}>
                         Close
                     </Button>
-                    <Button color="success" onClick={() => onSubmit(this.state.activeItem)}>
+                    <Button
+                        variant="success"
+                        onClick={() => onSubmit(this.state.activeItem)}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
         );
-    };
+    }
 }
 
-export default AddEditHoleInfoModal
+export default AddEditHoleInfoModal;

@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+// Library imports
+import { Component } from 'react';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+
 
 class AddEditRoundModal extends Component {
 
@@ -17,12 +19,11 @@ class AddEditRoundModal extends Component {
     }
 
     componentDidMount() {
-        this.refreshList()
+        this.refreshData();
     }
 
-    refreshList = () => {
-        let golfers = this.state.golfers;
-        let courses = this.state.courses;
+    refreshData = () => {
+        let { golfers, courses } = this.state;
         axios
             .get("http://localhost:8000/golfers/", {
                 auth: {
@@ -31,68 +32,60 @@ class AddEditRoundModal extends Component {
                 }
             })
             .then(res => {
-                golfers = res.data.results
-                return Promise.all([])
+                golfers = res.data.results;
+                return Promise.all([]);
             })
             .then(res => axios.get("http://localhost:8000/courses/"))
             .then(res => {
-                courses = res.data.results
-                return Promise.all([])
+                courses = res.data.results;
+                return Promise.all([]);
             })
             .then(res => this.setState({
                 golfers: golfers,
                 courses: courses
             }))
             .catch(err => console.log(err));
-    };
+    }
 
-    handleChange = (event, hole) => {
+    handleChange = event => {
         let { name, value } = event.target;
-        if (event.target.type === "checkbox") {
-            value = event.target.checked;
-        } else if (hole) {
-            value = {
-                hole: hole.url,
-                score: value
-            }
-        } else {
-            const valueAsNumber = Number(value)
-            if (!isNaN(valueAsNumber)) {
-                value = valueAsNumber
-            }
-        }
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
     }
 
     handleCourseChange = event => {
         let { name, value } = event.target;
-        let tees = this.state.tees
-        let course = this.state.courses.filter(course => course.url === value)[0]
+        let tees = this.state.tees;
+        let course = this.state.courses.find(course => course.url === value);
+
         let promises = []
         course.tees.forEach((tee) => {
-            promises.push(axios.get(tee))
+            promises.push(axios.get(tee));
         });
-        Promise.all(promises)
-        .then(res=> {
-            tees = res.map(tee => tee.data)
-            return Promise.all([])
-        })
-        .then(res => this.setState({
-            tees: tees,
-            activeItem: {
-                ...this.state.activeItem,
-                [name]: value
-            }
-        }))
-        .catch(err => console.log(err));
+        Promise
+            .all(promises)
+            .then(res => {
+                tees = res.map(tee => tee.data);
+                return Promise.all([]);
+            })
+            .then(res => this.setState({
+                tees: tees,
+                activeItem: {
+                    ...this.state.activeItem,
+                    [name]: value
+                }
+            }))
+            .catch(err => console.log(err));
     }
 
     render() {
         const { toggle, onSubmit, show } = this.props;
         return (
-            <Modal show={show} onHide={toggle}>
-                <Modal.Header closeButton>
+            <Modal
+                show={show}
+                onHide={toggle}>
+                <Modal.Header
+                    closeButton>
                     <Modal.Title>Add Round</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -104,9 +97,13 @@ class AddEditRoundModal extends Component {
                                 value={this.state.activeItem.golfer}
                                 onChange={this.handleChange}>
                                 <option>Select Golfer</option>
-                                {this.state.golfers.map((golfer) => (
-                                    <option key={golfer.id} value={golfer.url}>{golfer.username}</option>
-                                ))}
+                                {this.state.golfers.map((golfer) =>
+                                    <option
+                                        key={golfer.id}
+                                        value={golfer.url}>
+                                        {golfer.username}
+                                    </option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group>
@@ -116,9 +113,13 @@ class AddEditRoundModal extends Component {
                                 value={this.state.activeItem.course}
                                 onChange={this.handleCourseChange}>
                                 <option>Select course</option>
-                                {this.state.courses.map((course) => (
-                                    <option key={course.id} value={course.url}>{course.name}</option>
-                                ))}
+                                {this.state.courses.map((course) =>
+                                    <option
+                                        key={course.id}
+                                        value={course.url}>
+                                        {course.name}
+                                    </option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                         <Form.Group>
@@ -129,13 +130,13 @@ class AddEditRoundModal extends Component {
                                     value={this.state.activeItem.tee}
                                     onChange={this.handleChange}>
                                     <option>Select course</option>
-                                    {this.state.tees.map((tee) => (
+                                    {this.state.tees.map((tee) =>
                                         <option
                                             key={tee.id}
                                             value={tee.url}>
                                             {tee.name}
                                         </option>
-                                    ))}
+                                    )}
                                 </Form.Select>
                             ) : (
                                 <Form.Select disabled>
@@ -155,16 +156,20 @@ class AddEditRoundModal extends Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={toggle}>
+                    <Button
+                        variant="secondary"
+                        onClick={toggle}>
                         Close
                     </Button>
-                    <Button color="success" onClick={() => onSubmit(this.state.activeItem)}>
+                    <Button
+                        variant="success"
+                        onClick={() => onSubmit(this.state.activeItem)}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
         );
-    };
+    }
 }
 
-export default AddEditRoundModal
+export default AddEditRoundModal;
