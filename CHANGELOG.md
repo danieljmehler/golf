@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2023-02-07
+
+### Added
+
+* Flushed out README with startup instructions and TODO list
+* Added test data and instructions for loading
+
+### Updated
+
+* Cleaned up spacing, formatting, semi-colons, and imports in client
+* Updated data retrieval logic in client to pass data between views, so that it only fetches data when needed
+
+### Fixed
+
+* Links in CHANGELOG now point to the correct repository
+
 ## [0.0.2] - 2023-02-01
 
 ### Added
@@ -27,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initialized [Django](https://www.djangoproject.com/) project with apps: course, golfer, holeinfo, holescore, round, and tee
 - Client-side includes only [Django REST Framework](https://www.django-rest-framework.org/) default forms
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/0.0.2...HEAD
-[0.0.2]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/0.0.2
-[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/0.0.1
+[unreleased]: https://github.com/danieljmehler/golf/compare/0.0.3...HEAD
+[0.0.3]: https://github.com/danieljmehler/golf/releases/tag/0.0.3
+[0.0.2]: https://github.com/danieljmehler/golf/releases/tag/0.0.2
+[0.0.1]: https://github.com/danieljmehler/golf/releases/tag/0.0.1
