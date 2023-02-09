@@ -1,6 +1,6 @@
 # Golf Course and Score Tracker
 
-Django and React application for show golf course information, recording scores, and calculating a handicap.
+Django and React application to show golf course information, recording scores, and calculating a handicap.
 
 ## Development
 
